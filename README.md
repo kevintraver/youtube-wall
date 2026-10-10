@@ -29,7 +29,7 @@ It's a static web app (no backend). The wall autosaves in your browser and can b
 
 | Keys | Action |
 |---|---|
-| <kbd>1</kbd>–<kbd>9</kbd> | Make tile N the main tile (from Grid, switches to Main + strip). While picking a tile from search, puts the stream there |
+| <kbd>1</kbd>–<kbd>9</kbd> | Grid: toggle tile N's sound. Main layouts: make tile N the main tile. While picking a tile from search: put the stream there |
 | <kbd>`</kbd> | Swap back the last promote; press again to flip |
 | <kbd>G</kbd> then <kbd>1</kbd>–<kbd>9</kbd> | Grid: solo tile N's sound |
 | <kbd>L</kbd> then <kbd>1</kbd>–<kbd>4</kbd> | Grid / Main + strip / Main + sidebar / Main 2×2 |

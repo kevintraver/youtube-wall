@@ -83,7 +83,7 @@ function TileNumbers() {
         })}
       </div>
       <div className="hold-hint">
-        <span>{isMainLayout(layout) ? 'Number: make it main' : 'Number: make it main · G + number: sound only'}</span>
+        <span>{isMainLayout(layout) ? 'Number: make it main' : 'Number: sound on that tile'}</span>
         {swapBack && (
           <span>
             <Kbd binding={swapBack} /> swap back

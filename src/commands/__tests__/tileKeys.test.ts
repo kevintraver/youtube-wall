@@ -29,9 +29,9 @@ describe('tileKeyAction', () => {
     expect(tileKeyAction(5, wall('main-2x2'), false)).toEqual({ kind: 'promote', slotId: 's5' })
   })
 
-  it('switches Grid to Main + strip and promotes tile N', () => {
-    expect(tileKeyAction(3, wall('grid'), false)).toEqual({ kind: 'promote', slotId: 's2', layout: 'main-strip' })
-    expect(tileKeyAction(5, wall('grid'), false)).toEqual({ kind: 'promote', slotId: 's4', layout: 'main-strip' })
+  it('toggles tile N\'s sound in Grid, and skips empty tiles', () => {
+    expect(tileKeyAction(3, wall('grid'), false)).toEqual({ kind: 'sound', slotId: 's2' })
+    expect(tileKeyAction(5, wall('grid'), false)).toBeNull() // s4 is empty
   })
 
   it('places the picked stream while placing, using the same numbers', () => {

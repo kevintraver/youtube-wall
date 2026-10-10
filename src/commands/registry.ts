@@ -13,11 +13,8 @@ const LAYOUTS = Object.keys(LAYOUT_LABELS) as LayoutKind[]
 function pickTile(n: number): void {
   const action = tileKeyAction(n, useWall.getState(), useUi.getState().placing !== null)
   if (action?.kind === 'place') placeAt(action.slotId)
-  else if (action?.kind === 'promote') {
-    // Switch layout first: promote records what swap-back undoes, and that only exists in Main layouts.
-    if (action.layout) useWall.getState().setLayout(action.layout)
-    useWall.getState().promote(action.slotId)
-  }
+  else if (action?.kind === 'promote') useWall.getState().promote(action.slotId)
+  else if (action?.kind === 'sound') useWall.getState().toggleSound(action.slotId)
 }
 
 // The slot showing tile number `n`, if it has a stream.
@@ -97,7 +94,7 @@ export const COMMANDS: Command[] = [
       label: `Tile ${n}`,
       description:
         n === 1
-          ? 'Make it the main tile, switching to Main + strip if needed (while placing: put the stream there)'
+          ? 'Main layouts: make it the main tile. Grid: toggle its sound. While placing: put the stream there'
           : undefined,
       category: 'Tiles',
       scope: 'global',

@@ -18,19 +18,21 @@ export function tileIndex(n: number, layout: LayoutKind): number {
 
 export type TileKeyAction =
   | { kind: 'place'; slotId: string }
-  /** Make the tile main, first switching to `layout` when the wall is in Grid. */
-  | { kind: 'promote'; slotId: string; layout?: LayoutKind }
+  | { kind: 'promote'; slotId: string }
+  | { kind: 'sound'; slotId: string }
 
 type WallView = { layout: LayoutKind; slots: Slot[]; rows: number; cols: number }
 
 /**
- * What pressing tile number `n` does: while placing, put the picked stream there; otherwise make
- * it the main tile (from Grid, by switching to Main + strip). Nothing if there's no tile `n`.
+ * What pressing tile number `n` does. While placing: put the picked stream there. Main layouts:
+ * make it the main tile. Grid (no main tile): toggle its sound, skipping empty tiles.
+ * Nothing if there's no tile `n`.
  */
 export function tileKeyAction(n: number, wall: WallView, placing: boolean): TileKeyAction | null {
   const index = tileIndex(n, wall.layout)
   if (index >= wall.rows * wall.cols) return null
-  const slotId = wall.slots[index].id
-  if (placing) return { kind: 'place', slotId }
-  return isMainLayout(wall.layout) ? { kind: 'promote', slotId } : { kind: 'promote', slotId, layout: 'main-strip' }
+  const slot = wall.slots[index]
+  if (placing) return { kind: 'place', slotId: slot.id }
+  if (isMainLayout(wall.layout)) return { kind: 'promote', slotId: slot.id }
+  return slot.source ? { kind: 'sound', slotId: slot.id } : null
 }
