@@ -67,9 +67,13 @@ export const useWall = create<WallState>()(
         return target.id
       },
 
-
+      // Switching layouts never turns sound on or off. Muted stays muted; if something is playing,
+      // sound stays on and, in a Main layout, belongs to the main tile.
       setLayout: (layout) =>
-        set((s) => ({ layout, audioSlotId: isMainLayout(layout) ? s.slots[0].id : s.audioSlotId })),
+        set((s) => ({
+          layout,
+          audioSlotId: s.audioSlotId !== null && isMainLayout(layout) ? s.slots[0].id : s.audioSlotId,
+        })),
 
       setSize: (rows, cols) => set({ rows: clampSide(rows), cols: clampSide(cols) }),
 

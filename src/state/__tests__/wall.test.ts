@@ -76,4 +76,20 @@ describe('wall store', () => {
     useWall.getState().promote('s7')
     expect(useWall.getState().canSwapBack()).toBe(false)
   })
+
+  it('switching layouts keeps mute: muted stays muted', () => {
+    expect(useWall.getState().audioSlotId).toBeNull()
+    for (const layout of ['main-strip', 'main-sidebar', 'grid', 'main-2x2'] as const) {
+      useWall.getState().setLayout(layout)
+      expect(useWall.getState().audioSlotId).toBeNull()
+    }
+  })
+
+  it('switching layouts keeps sound on; in Main layouts it moves to the main tile', () => {
+    useWall.getState().toggleSound('s3') // Grid: sound on tile 4
+    useWall.getState().setLayout('main-strip')
+    expect(useWall.getState().audioSlotId).toBe('s0')
+    useWall.getState().setLayout('grid')
+    expect(useWall.getState().audioSlotId).toBe('s0') // still on, same tile
+  })
 })
