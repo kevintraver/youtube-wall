@@ -72,7 +72,7 @@ export function Toolbar({ visible }: { visible: boolean }) {
             title={`${LAYOUT_LABELS[kind]}${shortcutHint(`layout.${kind}`)}`}
             onClick={() => setLayout(kind)}
           >
-            <LayoutGlyph kind={kind} />
+            <LayoutGlyph kind={kind} rows={rows} cols={cols} />
           </button>
         ))}
       </div>

@@ -1,3 +1,4 @@
+import { computeLayout, isMainLayout } from '../lib/layouts'
 import type { LayoutKind } from '../lib/types'
 
 type IconProps = { size?: number }
@@ -118,32 +119,43 @@ export const Check = (p: IconProps) => (
   </Svg>
 )
 
-// Tiny diagrams of each layout preset, for the layout switcher.
-const LAYOUT_RECTS: Record<LayoutKind, [number, number, number, number][]> = {
-  grid: [
-    [1, 1, 6, 6], [8.5, 1, 6, 6], [16, 1, 6, 6],
-    [1, 8.5, 6, 6], [8.5, 8.5, 6, 6], [16, 8.5, 6, 6],
-    [1, 16, 6, 6], [8.5, 16, 6, 6], [16, 16, 6, 6],
-  ],
-  'main-strip': [
-    [1, 1, 15, 15], [17.5, 1, 4.5, 4.5], [17.5, 6.25, 4.5, 4.5], [17.5, 11.5, 4.5, 4.5],
-    [1, 17.5, 4.5, 4.5], [6.25, 17.5, 4.5, 4.5], [11.5, 17.5, 4.5, 4.5], [17.5, 17.5, 4.5, 4.5],
-  ],
-  'main-sidebar': [
-    [1, 1, 15, 21], [17.5, 1, 4.5, 4.5], [17.5, 6.5, 4.5, 4.5], [17.5, 12, 4.5, 4.5], [17.5, 17.5, 4.5, 4.5],
-  ],
-  'main-2x2': [
-    [1, 1, 13.5, 13.5], [16, 1, 6, 6], [16, 8.5, 6, 6],
-    [1, 16, 6, 6], [8.5, 16, 6, 6], [16, 16, 6, 6],
-  ],
-}
+// A tiny diagram of a layout, drawn from the same layout math as the wall (at the wall's current
+// tile count), so the preview always matches what you get.
+export function LayoutGlyph({ kind, rows, cols, size = 18 }: { kind: LayoutKind; rows: number; cols: number; size?: number }) {
+  const layout = computeLayout(kind, rows * cols, rows, cols)
+  const box = 24
+  const pad = 1
+  const gap = layout.cells.length > 9 ? 1 : 1.5
+  const offsets = (weights: number[]) => {
+    const total = weights.reduce((a, b) => a + b, 0)
+    const out = [0]
+    for (const w of weights) out.push(out[out.length - 1] + (w / total) * (box - 2 * pad))
+    return out
+  }
+  const xs = offsets(layout.colWeights)
+  const ys = offsets(layout.rowWeights)
+  const main = isMainLayout(kind)
 
-export function LayoutGlyph({ kind, size = 18 }: { kind: LayoutKind; size?: number }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 23 23" aria-hidden="true">
-      {LAYOUT_RECTS[kind].map(([x, y, w, h], i) => (
-        <rect key={i} x={x} y={y} width={w} height={h} rx="1" fill="currentColor" opacity={i === 0 && kind !== 'grid' ? 1 : 0.55} />
-      ))}
+    <svg width={size} height={size} viewBox={`0 0 ${box} ${box}`} aria-hidden="true">
+      {layout.cells.map((c, i) => {
+        const x = pad + xs[c.col - 1] + gap / 2
+        const y = pad + ys[c.row - 1] + gap / 2
+        const w = xs[c.col - 1 + c.colSpan] - xs[c.col - 1] - gap
+        const h = ys[c.row - 1 + c.rowSpan] - ys[c.row - 1] - gap
+        return (
+          <rect
+            key={i}
+            x={x}
+            y={y}
+            width={Math.max(w, 0.5)}
+            height={Math.max(h, 0.5)}
+            rx="1"
+            fill="currentColor"
+            opacity={main && i === 0 ? 1 : 0.55}
+          />
+        )
+      })}
     </svg>
   )
 }

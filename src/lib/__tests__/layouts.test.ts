@@ -53,4 +53,15 @@ describe('computeLayout', () => {
     expect(layout.rowCount).toBe(4)
     expect(layout.cells[0]).toEqual({ col: 1, row: 1, colSpan: 4, rowSpan: 3 })
   })
+
+  it('builds the CSS tracks from the same weights the layout icons draw with', () => {
+    const sidebar = computeLayout('main-sidebar', 9, 3, 3)
+    expect(sidebar.colWeights).toEqual([2.5, 1, 1])
+    expect(sidebar.columns).toBe('2.5fr 1fr 1fr')
+    for (const kind of ['grid', 'main-strip', 'main-sidebar', 'main-2x2'] as const) {
+      const l = computeLayout(kind, 12, 3, 4)
+      expect(l.columns.split(' ')).toHaveLength(l.colWeights.length)
+      expect(l.rows.split(' ')).toHaveLength(l.rowWeights.length)
+    }
+  })
 })
