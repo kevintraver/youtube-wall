@@ -1,0 +1,325 @@
+/* ---------- Keycaps ---------- */
+
+.kbd-binding {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  white-space: nowrap;
+}
+
+/* ---------- Shortcuts dialog ---------- */
+
+.shortcuts-dialog {
+  width: min(640px, calc(100vw - 32px));
+  max-height: calc(100vh - 64px);
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  color: var(--text);
+  background: var(--panel);
+}
+
+.shortcuts-dialog::backdrop {
+  background: rgb(0 0 0 / 0.6);
+  backdrop-filter: blur(2px);
+}
+
+.shortcuts-body {
+  gap: 14px;
+}
+
+.shortcuts-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.shortcuts-head h2 {
+  margin: 0;
+}
+
+.shortcuts-tip {
+  margin: 0;
+  color: var(--muted);
+}
+
+.shortcuts-group h3 {
+  margin: 0 0 4px;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+.shortcuts-group ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.shortcut-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 4px 12px;
+  padding: 6px 8px;
+  margin: 0 -8px;
+  border-radius: 6px;
+}
+
+.shortcut-row:hover,
+.shortcut-row.recording {
+  background: var(--panel-2);
+}
+
+.shortcut-label {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.shortcut-desc {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.shortcut-warn {
+  font-size: 12px;
+  color: var(--warn);
+}
+
+.shortcut-keys {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.shortcut-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.shortcut-or,
+.shortcut-none {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.chip-remove {
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  line-height: 1;
+  color: var(--muted);
+  background: none;
+}
+
+.chip-remove:hover {
+  color: var(--text);
+  background: var(--line);
+}
+
+.shortcut-prompt {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  color: var(--accent);
+}
+
+.shortcut-prompt small {
+  color: var(--muted);
+}
+
+.shortcut-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: flex-end;
+  gap: 2px;
+}
+
+.shortcut-actions .text-button {
+  font-size: 12px;
+}
+
+.shortcut-conflict {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px 12px;
+  padding: 8px 10px;
+  border: 1px solid color-mix(in srgb, var(--warn) 45%, transparent);
+  border-radius: 6px;
+  font-size: 13px;
+  background: color-mix(in srgb, var(--warn) 10%, transparent);
+}
+
+.conflict-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.conflict-actions .text-button:first-child {
+  color: var(--warn);
+  font-weight: 600;
+}
+
+.shortcuts-actions {
+  position: sticky;
+  bottom: 0;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+  background: var(--panel);
+}
+
+.shortcuts-actions .primary {
+  margin-left: auto;
+}
+
+.shortcuts-actions .text-button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* ---------- Hold Shift: tile numbers ---------- */
+
+.hold-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  pointer-events: none;
+}
+
+.hold-grid {
+  position: absolute;
+  display: grid;
+}
+
+.hold-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: rgb(0 0 0 / 0.6);
+  animation: hold-in 0.12s ease;
+}
+
+.hold-cell.main {
+  background: rgb(0 0 0 / 0.25);
+}
+
+.hold-number {
+  display: grid;
+  place-items: center;
+  min-width: 56px;
+  height: 56px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  font-size: 28px;
+  font-weight: 700;
+  background: rgb(18 18 20 / 0.9);
+}
+
+.hold-keys {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.hold-hint {
+  position: absolute;
+  left: 50%;
+  bottom: 24px;
+  display: flex;
+  gap: 16px;
+  padding: 8px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  font-size: 13px;
+  color: var(--muted);
+  background: var(--panel-2);
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+@keyframes hold-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (max-width: 560px) {
+  .shortcut-row {
+    grid-template-columns: 1fr;
+  }
+
+  .shortcut-keys {
+    justify-content: flex-start;
+  }
+
+  .hold-hint {
+    flex-direction: column;
+    gap: 4px;
+    white-space: normal;
+  }
+}
+
+/* ---------- Tile number badges ---------- */
+
+/* Above the tiles, under the toolbar (20) and the search panel (15). */
+.tile-badges {
+  position: fixed;
+  inset: 0;
+  z-index: 14;
+  pointer-events: none;
+}
+
+.badge-grid {
+  position: absolute;
+  display: grid;
+}
+
+.tile-badge {
+  position: absolute;
+  margin: 8px;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: 6px;
+  font: 700 12px/22px ui-monospace, SFMono-Regular, Menlo, monospace;
+  text-align: center;
+  color: rgb(255 255 255 / 0.85);
+  background: rgb(0 0 0 / 0.55);
+  border: 1px solid rgb(255 255 255 / 0.12);
+  transition: translate 0.2s ease;
+}
+
+.badge-grid > div {
+  position: relative;
+}
+
+/* In fullscreen, keep top-row badges clear of the floating toolbar while it's showing. */
+.app.fullscreen:not(.idle) .tile-badge.first-row {
+  translate: 0 48px;
+}
+
+.tile-badge.audible {
+  color: #fff;
+  background: color-mix(in srgb, var(--accent) 75%, transparent);
+  border-color: transparent;
+}
