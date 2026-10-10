@@ -16,6 +16,7 @@ type WallState = {
   rows: number
   cols: number
   audioSlotId: string | null
+  lastAudioSlotId: string | null // the tile that most recently had sound, for unmuting
   // The last promote, so it can be swapped back: `promoted` became main, `demoted` (the old main)
   // took its place. Not persisted.
   lastPromote: { promoted: string; demoted: string } | null
@@ -31,6 +32,7 @@ type WallState = {
   canSwapBack: () => boolean
   swapBack: () => void
   muteAll: () => void
+  toggleMute: () => void
   importShared: (hash: string) => boolean
   shareUrl: () => string
 }
@@ -47,6 +49,7 @@ export const useWall = create<WallState>()(
       rows: DEFAULT_SIDE,
       cols: DEFAULT_SIDE,
       audioSlotId: null,
+      lastAudioSlotId: null,
       lastPromote: null,
 
       setSource: (slotId, source) =>
@@ -124,6 +127,22 @@ export const useWall = create<WallState>()(
 
       muteAll: () => set({ audioSlotId: null }),
 
+      // The toolbar's Sound on/off toggle (and M). Unmuting brings sound back to the main tile in
+      // Main layouts; in Grid, to the tile that last had it (or the first tile with a stream).
+      toggleMute: () => {
+        const { audioSlotId, lastAudioSlotId, slots, rows, cols, layout } = get()
+        if (audioSlotId) {
+          set({ audioSlotId: null })
+          return
+        }
+        const visible = slots.slice(0, rows * cols).filter((slot) => slot.source)
+        const has = (id: string | null) => id !== null && visible.some((slot) => slot.id === id)
+        const target = isMainLayout(layout)
+          ? has(slots[0].id) ? slots[0].id : null
+          : has(lastAudioSlotId) ? lastAudioSlotId : (visible[0]?.id ?? null)
+        if (target) set({ audioSlotId: target })
+      },
+
       importShared: (hash) => {
         const shared = decodeWall(hash)
         if (!shared) return false
@@ -135,6 +154,7 @@ export const useWall = create<WallState>()(
           cols: shared.cols,
           // Start muted: browsers pause a video that unmutes before the user has clicked anything.
           audioSlotId: null,
+          lastAudioSlotId: null,
           lastPromote: null,
         })
         return true
@@ -154,3 +174,8 @@ export const useWall = create<WallState>()(
     },
   ),
 )
+
+// Remember whichever tile last had sound, so unmuting can bring it back.
+useWall.subscribe((state, prev) => {
+  if (state.audioSlotId && state.audioSlotId !== prev.audioSlotId) useWall.setState({ lastAudioSlotId: state.audioSlotId })
+})

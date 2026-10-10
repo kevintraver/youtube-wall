@@ -34,7 +34,7 @@ It's a static web app (no backend). The wall autosaves in your browser and can b
 | <kbd>G</kbd> then <kbd>1</kbd>–<kbd>9</kbd> | Grid: solo tile N's sound |
 | <kbd>L</kbd> then <kbd>1</kbd>–<kbd>4</kbd> | Grid / Main + strip / Main + sidebar / Main 2×2 |
 | <kbd>/</kbd> | Search live streams |
-| <kbd>M</kbd> | Mute all |
+| <kbd>M</kbd> | Mute / unmute |
 | <kbd>F</kbd> | Fullscreen |
 | <kbd>Delete</kbd> | Remove the tile under the mouse |
 | <kbd>⌘Z</kbd> | Undo |

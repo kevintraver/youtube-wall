@@ -92,4 +92,23 @@ describe('wall store', () => {
     useWall.getState().setLayout('grid')
     expect(useWall.getState().audioSlotId).toBe('s0') // still on, same tile
   })
+
+  it('toggleMute mutes, then brings sound back to the tile that last had it (Grid)', () => {
+    useWall.getState().toggleSound('s2')
+    useWall.getState().toggleMute()
+    expect(useWall.getState().audioSlotId).toBeNull()
+    useWall.getState().toggleMute()
+    expect(useWall.getState().audioSlotId).toBe('s2')
+  })
+
+  it('toggleMute unmutes the main tile in Main layouts, and the first stream in Grid if none had sound', () => {
+    useWall.getState().toggleMute()
+    expect(useWall.getState().audioSlotId).toBe('s0') // Grid, nothing had sound yet
+    useWall.getState().setLayout('main-strip')
+    useWall.getState().promote('s1') // s1 is now main (promoting gives it sound)
+    useWall.getState().toggleMute()
+    expect(useWall.getState().audioSlotId).toBeNull()
+    useWall.getState().toggleMute()
+    expect(useWall.getState().audioSlotId).toBe('s1')
+  })
 })

@@ -193,29 +193,36 @@ code {
 }
 
 .sound-chip {
-  display: flex;
+  display: inline-flex;
   align-items: center;
+  gap: 7px;
   height: 26px;
+  padding: 0 11px 0 10px;
+  border: 1px solid var(--line);
   border-radius: 13px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  background: var(--panel-2);
+}
+
+.sound-chip:focus:not(:focus-visible) {
+  outline: none;
+}
+
+.sound-chip:hover {
+  color: var(--text);
+  border-color: #55555f;
+}
+
+.sound-chip.on {
+  border-color: transparent;
   color: #fff;
   background: var(--accent);
 }
 
-.sound-chip button {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  height: 100%;
-  padding: 0 8px 0 10px;
-  border: 0;
-  font-size: 12px;
-  font-weight: 600;
-  background: none;
-}
-
-.sound-chip button + button {
-  padding: 0 9px 0 6px;
-  border-left: 1px solid rgb(255 255 255 / 0.3);
+.sound-chip.on:hover {
+  background: #ff5a50;
 }
 
 .status-chip {
@@ -431,8 +438,10 @@ code {
   pointer-events: none;
 }
 
-/* After a promote: send the main tile back to where it came from. */
+/* After a promote: send the main tile back to where it came from. Shows for a few seconds, then
+   fades out; hovering the main tile brings it back. (Remounted per promote, so it restarts.) */
 .swap-back {
+  animation: swap-back-fade 0.4s ease 4s forwards;
   display: inline-flex;
   align-items: center;
   gap: 5px;
@@ -445,6 +454,45 @@ code {
   color: #fff;
   background: rgb(0 0 0 / 0.65);
   backdrop-filter: blur(6px);
+}
+
+@keyframes swap-back-fade {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+.tile:hover .swap-back {
+  animation: none;
+}
+
+/* The main tile's sound toggle, in the corner instead of the middle of the picture. */
+.corner-sound {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 1px solid rgb(255 255 255 / 0.3);
+  border-radius: 50%;
+  color: #fff;
+  background: rgb(0 0 0 / 0.6);
+  backdrop-filter: blur(6px);
+}
+
+.corner-sound:hover {
+  background: rgb(0 0 0 / 0.8);
+}
+
+.corner-sound[aria-pressed='true'] {
+  border-color: transparent;
+  background: var(--accent);
+  box-shadow: 0 2px 10px rgb(255 59 48 / 0.5);
+}
+
+.corner-sound[aria-pressed='true']:hover {
+  background: #ff5a50;
 }
 
 .swap-back:hover {

@@ -57,6 +57,8 @@ export function Tile({ slot, index, cell, isMain }: Props) {
   const swapBack = useWall((s) => s.swapBack)
   // On the main tile after a promote: where the promoted tile came from (its old spot is now
   // held by the tile it replaced), shown as "Back to N" using the same numbers as the badges/keys.
+  // Changes on every promote/swap-back, so the chip remounts and its fade-out restarts.
+  const promoteKey = useWall((s) => (s.lastPromote ? `${s.lastPromote.promoted}>${s.lastPromote.demoted}` : ''))
   const backTo = useWall((s) => {
     if (!isMain || !s.canSwapBack() || !s.lastPromote) return null
     const { demoted } = s.lastPromote
@@ -89,6 +91,7 @@ export function Tile({ slot, index, cell, isMain }: Props) {
   // Errors and titles belong to the target they came from; a new target starts clean.
   const playerError = errorState && errorState.planKey === planKey ? errorState.code : null
   const playerTitle = titleState && titleState.planKey === planKey ? titleState.title : ''
+  const playing = plan?.kind === 'play' && playerError === null
 
   // Live tiles that fail keep retrying; channels also look for a new stream.
   useEffect(() => {
@@ -237,10 +240,10 @@ export function Tile({ slot, index, cell, isMain }: Props) {
         </div>
       </div>
 
-      {/* Big center sound button. In Main layouts sound belongs to the main tile; clicking a small
-          tile promotes it (the click-catcher), so small tiles get no center button. */}
+      {/* Big center sound button, Grid only. In Main layouts the main tile's toggle sits in its corner
+          (not over the picture), and clicking a small tile promotes it (the click-catcher). */}
       <div className="center-controls">
-        {plan?.kind === 'play' && playerError === null && (!mainLayout || isMain) && (
+        {playing && !mainLayout && (
           <button
             className="round-button sound"
             aria-pressed={audible}
@@ -253,17 +256,30 @@ export function Tile({ slot, index, cell, isMain }: Props) {
         )}
       </div>
 
-      {/* The speaker badge marks the audible tile in Grid; in Main layouts the big tile obviously has it. */}
-      {((audible && !isMain) || backTo) && (
+      {/* Top-right corner: "Back to N" after a promote, the main tile's sound toggle, and in Grid
+          the speaker badge on the tile that has sound. */}
+      {((audible && !isMain) || backTo || (isMain && playing)) && (
         <div className="tile-corner">
           {backTo && (
             <button
+              key={promoteKey}
               className="swap-back"
               title={`Send this tile back to spot ${backTo} and bring back the previous main`}
               onClick={swapBack}
             >
               <Undo size={13} />
               Back to {backTo}
+            </button>
+          )}
+          {isMain && playing && (
+            <button
+              className="corner-sound"
+              aria-pressed={audible}
+              aria-label={audible ? 'Mute' : 'Unmute'}
+              title={audible ? 'Mute' : 'Unmute'}
+              onClick={() => toggleSound(slot.id)}
+            >
+              {audible ? <SoundOn size={16} /> : <SoundOff size={16} />}
             </button>
           )}
           {audible && !isMain && (

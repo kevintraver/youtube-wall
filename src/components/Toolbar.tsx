@@ -5,7 +5,7 @@ import type { LayoutKind } from '../lib/types'
 import { useSettings } from '../state/settings'
 import { useUi } from '../state/ui'
 import { MAX_SIDE, useWall } from '../state/wall'
-import { Close, Expand, Gear, LayoutGlyph, LinkIcon, Search, SoundOn, Trash } from './icons'
+import { Expand, Gear, LayoutGlyph, LinkIcon, Search, SoundOff, SoundOn, Trash } from './icons'
 
 const LAYOUTS = Object.keys(LAYOUT_LABELS) as LayoutKind[]
 const SIDES = Array.from({ length: MAX_SIDE }, (_, i) => i + 1)
@@ -30,23 +30,23 @@ function ApiStatus() {
   )
 }
 
-// Which tile is making sound, visible at a glance; click to find it, ✕ to mute everything.
-function SoundStatus() {
-  const audioSlotId = useWall((s) => (s.slots.some((slot) => slot.id === s.audioSlotId && slot.source) ? s.audioSlotId : null))
-  const muteAll = useWall((s) => s.muteAll)
-  const flash = useUi((s) => s.flash)
-  if (!audioSlotId) return null
+// One-click sound toggle. Hidden until the wall has a stream to hear.
+function SoundToggle() {
+  const on = useWall((s) => s.slots.slice(0, s.rows * s.cols).some((slot) => slot.id === s.audioSlotId && slot.source))
+  const anyStream = useWall((s) => s.slots.slice(0, s.rows * s.cols).some((slot) => slot.source))
+  const toggleMute = useWall((s) => s.toggleMute)
+  if (!anyStream) return null
 
   return (
-    <div className="sound-chip">
-      <button title="Show which tile is playing sound" onClick={() => flash(audioSlotId)}>
-        <SoundOn size={14} />
-        <span>Sound on</span>
-      </button>
-      <button title={`Mute all${shortcutHint('audio.muteAll')}`} aria-label="Mute all" onClick={muteAll}>
-        <Close size={12} />
-      </button>
-    </div>
+    <button
+      className={`sound-chip${on ? ' on' : ''}`}
+      aria-pressed={on}
+      title={`${on ? 'Mute' : 'Unmute'}${shortcutHint('audio.muteAll')}`}
+      onClick={toggleMute}
+    >
+      {on ? <SoundOn size={14} /> : <SoundOff size={14} />}
+      <span>{on ? 'Sound on' : 'Sound off'}</span>
+    </button>
   )
 }
 
@@ -91,9 +91,10 @@ export function Toolbar({ visible }: { visible: boolean }) {
         </select>
       </label>
 
+      <SoundToggle />
+
       <div className="spacer" />
 
-      <SoundStatus />
       <ApiStatus />
 
       <button

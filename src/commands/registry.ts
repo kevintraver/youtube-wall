@@ -45,10 +45,11 @@ export const COMMANDS: Command[] = [
   },
   {
     id: 'audio.muteAll',
-    label: 'Mute all',
+    label: 'Mute / unmute',
+    description: 'Unmuting brings sound back to the main tile, or in Grid the tile that last had it',
     category: 'Wall',
     scope: 'global',
-    run: () => useWall.getState().muteAll(),
+    run: () => useWall.getState().toggleMute(),
   },
   {
     id: 'history.undo',
